@@ -1,0 +1,23 @@
+{
+  "name": "vrptk",
+  "version-string": "0.1.0",
+  "description": "Vehicle Routing Problem Tookit",
+  "license": "MIT",
+  "dependencies": [
+    "tinyxml2",
+    "sdl2",
+    "sdl2-ttf",
+    "glog",
+    "implot",
+    "tinyfiledialogs",
+    "eigen3",
+    {
+      "name": "imgui",
+      "features": [
+        "sdl2-binding",
+        "sdl2-renderer-binding",
+        "docking-experimental"
+      ]
+    }
+  ]
+}

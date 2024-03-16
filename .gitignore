@@ -1,0 +1,13 @@
+.DS_Store
+CMakeCache.txt
+*.ini
+*.log
+cmake_install.cmake
+
+.cache/
+_deps/
+bin/
+build/
+CMakeFiles/
+vcpkg_installed/
+*/__pycache__/
