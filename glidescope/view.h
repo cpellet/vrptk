@@ -18,7 +18,6 @@ public:
         return enabled;
     }
     char* getName() const { return name; }
-    
 };
 
 #endif // GLIDESCOPE_VIEW_H

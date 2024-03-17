@@ -4,10 +4,10 @@
 #include "../vrp.h"
 
 namespace VRPTK {
-class Loader {
-public:
-    VRP* load(const char* filename);
-};
+    class Loader {
+    public:
+        VRP* load(const char* filename);
+    };
 }
 
 #endif // VRPTK_LOADER_H

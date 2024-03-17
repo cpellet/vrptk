@@ -11,13 +11,13 @@ int SDL_RenderFilledCircle(SDL_Renderer* renderer, int x, int y, int radius) {
 
     while (offsety >= offsetx) {
         status += SDL_RenderDrawLine(renderer, x - offsety, y + offsetx,
-                                     x + offsety, y + offsetx);
+            x + offsety, y + offsetx);
         status += SDL_RenderDrawLine(renderer, x - offsetx, y + offsety,
-                                     x + offsetx, y + offsety);
+            x + offsetx, y + offsety);
         status += SDL_RenderDrawLine(renderer, x - offsetx, y - offsety,
-                                     x + offsetx, y - offsety);
+            x + offsetx, y - offsety);
         status += SDL_RenderDrawLine(renderer, x - offsety, y - offsetx,
-                                     x + offsety, y - offsetx);
+            x + offsety, y - offsetx);
 
         if (status < 0) {
             status = -1;

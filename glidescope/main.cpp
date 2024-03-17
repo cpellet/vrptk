@@ -7,7 +7,7 @@
 #include "views/inspector.h"
 #include "views/schedule.h"
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
     google::InitGoogleLogging(argv[0]);
     google::SetStderrLogging(google::GLOG_INFO);
     auto* engine = new GEngine(1280, 720);

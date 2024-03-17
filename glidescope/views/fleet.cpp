@@ -5,10 +5,10 @@ bool GFleetView::draw(GlobalState* state) {
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_AlwaysAutoResize);
     std::vector<VRPTK::VehicleProfile> fleet = state->vrp->getFleet();
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-    if (ImGui::TreeNode("Profiles")){
-        for (int i = 0; i < fleet.size(); i++){
+    if (ImGui::TreeNode("Profiles")) {
+        for (int i = 0; i < fleet.size(); i++) {
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-            if (ImGui::TreeNode(std::to_string(fleet[i].getType()).c_str())){
+            if (ImGui::TreeNode(std::to_string(fleet[i].getType()).c_str())) {
                 ImGui::Text("From %i to %i", fleet[i].getDeparture(), fleet[i].getArrival());
                 ImGui::Text("Vehicles: %i", fleet[i].getNumber());
                 ImGui::Text("Capacity: %.2f", fleet[i].getCapacity());

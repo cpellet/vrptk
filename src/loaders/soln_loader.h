@@ -10,10 +10,10 @@
 
 namespace VRPTK {
 
-class SolutionLoader: public Loader {
-public:
-    Solution* load(const char* filename);
-};
+    class SolutionLoader : public Loader {
+    public:
+        Solution* load(const char* filename);
+    };
 
 }
 

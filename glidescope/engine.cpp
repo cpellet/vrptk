@@ -19,13 +19,13 @@ void GEngine::start() {
     ASSERT(!TTF_Init(), "TTF_Init failed: %s", TTF_GetError());
     this->window =
         SDL_CreateWindow("VRPTK Explorer", SDL_WINDOWPOS_CENTERED_DISPLAY(0),
-                         SDL_WINDOWPOS_CENTERED_DISPLAY(0), this->width,
-                         this->height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+            SDL_WINDOWPOS_CENTERED_DISPLAY(0), this->width,
+            this->height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     ASSERT(this->window, "SDL_CreateWindow failed: %s", SDL_GetError());
     this->renderer = SDL_CreateRenderer(
         this->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     ASSERT(this->renderer, "SDL_CreateRenderer failed: %s", SDL_GetError());
-    const float scale_x{this->getScale()};
+    const float scale_x{ this->getScale() };
     SDL_RenderSetScale(this->renderer, scale_x, scale_x);
     this->font = TTF_OpenFont("assets/Vdj.ttf", 15);
     ASSERT(this->font, "TTF_OpenFont failed: %s", TTF_GetError());
@@ -33,10 +33,10 @@ void GEngine::start() {
     ImGui::CreateContext();
     ImPlot::CreateContext();
     this->io = &ImGui::GetIO();
-    this->io->ConfigFlags   |= ImGuiConfigFlags_NavEnableKeyboard
-                            | ImGuiConfigFlags_DockingEnable
-                            | ImGuiConfigFlags_ViewportsEnable;
-    const float font_size{12.0F * scale_x};
+    this->io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard
+        | ImGuiConfigFlags_DockingEnable
+        | ImGuiConfigFlags_ViewportsEnable;
+    const float font_size{ 12.0F * scale_x };
     this->io->FontDefault = this->io->Fonts->AddFontFromFileTTF(
         "assets/Vdj.ttf",
         font_size
@@ -71,7 +71,7 @@ void GEngine::loop() {
             this->processEvent(event);
         }
         uint64_t frameEnd = SDL_GetTicks64();
-        uint64_t endPerf = SDL_GetPerformanceCounter(); 
+        uint64_t endPerf = SDL_GetPerformanceCounter();
         uint64_t framePerf = endPerf - startPerf;
         frameTime = frameEnd - frameStart;
         last_time = frameStart;
@@ -83,24 +83,24 @@ void GEngine::loop() {
 
 void GEngine::processEvent(SDL_Event& event) {
     ImGui_ImplSDL2_ProcessEvent(&event);
-     switch (event.type) {
-        case SDL_QUIT:
+    switch (event.type) {
+    case SDL_QUIT:
+        this->will_exit = true;
+        break;
+    case SDL_KEYDOWN:
+        if (event.key.keysym.sym == SDLK_q) {
             this->will_exit = true;
-            break;
-        case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_q) {
-                this->will_exit = true;
-            }
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            float x = event.button.x;
-            float y = event.button.y;
-            if (x > this->viewport_pos.x && x < this->viewport_pos.x + this->viewport_size.x &&
-                y > this->viewport_pos.y && y < this->viewport_pos.y + this->viewport_size.y) {
-                this->handleViewportClick(event.button.button, x, y);
-            }
-            break;
-     }
+        }
+        break;
+    case SDL_MOUSEBUTTONDOWN:
+        float x = event.button.x;
+        float y = event.button.y;
+        if (x > this->viewport_pos.x && x < this->viewport_pos.x + this->viewport_size.x &&
+            y > this->viewport_pos.y && y < this->viewport_pos.y + this->viewport_size.y) {
+            this->handleViewportClick(event.button.button, x, y);
+        }
+        break;
+    }
 }
 
 void GEngine::handleViewportClick(uint8_t button, int x, int y) {
@@ -117,7 +117,7 @@ void GEngine::renderUI() {
     ImGui::NewFrame();
     this->node_positions.clear();
     ImGuiID dockspace_id = ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-    if (firstLoop){
+    if (firstLoop) {
         firstLoop = false;
         ImGui::DockBuilderRemoveNode(dockspace_id);
         ImGui::DockBuilderAddNode(dockspace_id);
@@ -137,11 +137,11 @@ void GEngine::renderUI() {
         ImGui::DockBuilderDockWindow("Schedule", dock4);
         ImGui::DockBuilderFinish(dockspace_id);
     }
-    if (ImGui::BeginMainMenuBar()){
-        if (ImGui::BeginMenu("File")){
-            if(ImGui::BeginMenu("Open")){
-                if (ImGui::MenuItem("Dataset")){
-                    char const* lFilterPatterns[1] = {"*.xml"};
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::BeginMenu("Open")) {
+                if (ImGui::MenuItem("Dataset")) {
+                    char const* lFilterPatterns[1] = { "*.xml" };
                     char const* lTheOpenFileName = tinyfd_openFileDialog(
                         "Open XML Dataset",
                         "",
@@ -150,12 +150,12 @@ void GEngine::renderUI() {
                         NULL,
                         0
                     );
-                    if (lTheOpenFileName){
+                    if (lTheOpenFileName) {
                         this->reset(const_cast<char*>(lTheOpenFileName));
                     }
                 }
-                if (ImGui::MenuItem("Solution")){
-                    char const* lFilterPatterns[1] = {"*.txt"};
+                if (ImGui::MenuItem("Solution")) {
+                    char const* lFilterPatterns[1] = { "*.txt" };
                     char const* lTheOpenFileName = tinyfd_openFileDialog(
                         "Open Solution",
                         "",
@@ -164,7 +164,7 @@ void GEngine::renderUI() {
                         NULL,
                         0
                     );
-                    if (lTheOpenFileName){
+                    if (lTheOpenFileName) {
                         auto loader = new VRPTK::SolutionLoader();
                         this->state->solutions.push_back(loader->load(lTheOpenFileName));
                         LOG(INFO) << "Loaded " << lTheOpenFileName;
@@ -172,33 +172,33 @@ void GEngine::renderUI() {
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::MenuItem("Exit", "q")){
+            if (ImGui::MenuItem("Exit", "q")) {
                 this->will_exit = true;
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Solve")){
+        if (ImGui::BeginMenu("Solve")) {
             ImGui::SeparatorText("Third-party");
-            if (ImGui::MenuItem("Ortools")){
+            if (ImGui::MenuItem("Ortools")) {
                 LOG(INFO) << "Solving with Ortools";
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("View")){
-            for (auto view : this->views){
+        if (ImGui::BeginMenu("View")) {
+            for (auto view : this->views) {
                 ImGui::MenuItem(view->getName(), NULL, &view->enabled);
             }
             ImGui::MenuItem("Performance", NULL, &this->performance_window);
             ImGui::MenuItem("ImGUI Demo", NULL, &this->demo_window);
             ImGui::Separator();
-            if (ImGui::BeginMenu("Colors")){
-                if (ImGui::MenuItem("Dark")){
+            if (ImGui::BeginMenu("Colors")) {
+                if (ImGui::MenuItem("Dark")) {
                     ImGui::StyleColorsDark();
                 }
-                if (ImGui::MenuItem("Light")){
+                if (ImGui::MenuItem("Light")) {
                     ImGui::StyleColorsLight();
                 }
-                if (ImGui::MenuItem("Classic")){
+                if (ImGui::MenuItem("Classic")) {
                     ImGui::StyleColorsClassic();
                 }
                 ImGui::EndMenu();
@@ -219,31 +219,31 @@ void GEngine::renderUI() {
     recalculateViewport();
     ImVec2 content_avail = ImGui::GetContentRegionAvail();
     ImGui::SetCursorPos(content_avail - ImVec2(30, 10));
-    if (ImGui::Button("G", ImVec2(30, 30))){
+    if (ImGui::Button("G", ImVec2(30, 30))) {
         this->grid_on = !this->grid_on;
     }
     ImGui::SetItemTooltip("Grid display");
-    if (ImGui::BeginPopupContextItem()){
+    if (ImGui::BeginPopupContextItem()) {
         ImGui::SliderInt("Grid Step", &this->grid_step, 1, 50);
         ImGui::EndPopup();
     }
     ImGui::SetCursorPos(content_avail - ImVec2(60, 10));
-    if (ImGui::Button("C", ImVec2(30, 30))){
+    if (ImGui::Button("C", ImVec2(30, 30))) {
         this->color_mode = (this->color_mode + 1) % 3;
     }
     ImGui::SetItemTooltip("Color mode");
-    if (ImGui::BeginPopupContextItem()){
+    if (ImGui::BeginPopupContextItem()) {
         const char* elem_name = color_mode == 0 ? "None" : color_mode == 1 ? "Type" : color_mode == 2 ? "Quantity" : "Id";
         ImGui::SliderInt("Scheme", &color_mode, 0, 3, elem_name);
         ImGui::EndPopup();
     }
     ImGui::SetCursorPos(content_avail - ImVec2(90, 10));
-    if (ImGui::Button("S", ImVec2(30, 30))){
+    if (ImGui::Button("S", ImVec2(30, 30))) {
         this->setup_route_on = !this->setup_route_on;
     }
     ImGui::SetItemTooltip("Display setup segment");
     ImGui::End();
-    if (this->state->selected_node != -1){
+    if (this->state->selected_node != -1) {
         ImVec2 window_pos = this->node_positions[this->state->selected_node];
         window_pos.x += 5;
         window_pos.y += 5;
@@ -252,7 +252,7 @@ void GEngine::renderUI() {
         ImGui::Text("Node %i", this->state->selected_node);
         ImGui::End();
     }
-    if (this->performance_window){
+    if (this->performance_window) {
         ImGui::Begin("Performance", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
         float fps = ImGui::GetIO().Framerate;
         ImGui::Text("FPS: %f", ImGui::GetIO().Framerate);
@@ -265,7 +265,7 @@ ImVec2 GEngine::toScreenCoords(float x, float y, std::pair<ImVec2, ImVec2> bound
     int padding = 10;
     int padding_y = 40;
     return ImVec2((x - bounds.first.x) * (viewport_size.x - padding) / (bounds.second.x - bounds.first.x) + viewport_pos.x + padding,
-                  (y - bounds.first.y) * (viewport_size.y - padding_y) / (bounds.second.y - bounds.first.y) + viewport_pos.y + padding_y);
+        (y - bounds.first.y) * (viewport_size.y - padding_y) / (bounds.second.y - bounds.first.y) + viewport_pos.y + padding_y);
 }
 
 void GEngine::recalculateViewport() {
@@ -278,7 +278,7 @@ void GEngine::recalculateViewport() {
     int padding_y = 40;
     this->viewport_draw_list = ImGui::GetWindowDrawList();
     ImVec2 window_pos = ImGui::GetWindowPos();
-    if (this->grid_on){
+    if (this->grid_on) {
         for (float x = bounds.first.x; x <= bounds.second.x; x += this->grid_step) {
             int screen_x = (x - bounds.first.x) * (viewport_size.x - padding) / (bounds.second.x - bounds.first.x) + window_pos.x + padding;
             this->viewport_draw_list->AddLine(ImVec2(screen_x, window_pos.y + padding_y), ImVec2(screen_x, window_pos.y + padding_y + viewport_size.y - padding), IM_COL32(255, 255, 255, 50));
@@ -295,53 +295,53 @@ void GEngine::recalculateViewport() {
         this->node_positions[i] = ImVec2(screen_pos.x, screen_pos.y);
         bool selected = i == this->state->selected_node;
         ImU32 color = IM_COL32(255, 255, 255, 255);
-        if (this->color_mode == 1){
+        if (this->color_mode == 1) {
             ImColor c = ImColor::HSV((int)nodes(i, 3) / 7.0f, 0.6f, 0.6f);
             color = c.operator ImU32();
-        } else if (this->color_mode == 2){
-            if (requests.find(i) != requests.end()){
+        } else if (this->color_mode == 2) {
+            if (requests.find(i) != requests.end()) {
                 double quantity = requests.at(i).getQuantity();
                 ImColor c = ImColor::HSV(quantity / 100.0f, 0.6f, 0.6f);
                 color = c.operator ImU32();
             }
-        } else if (this->color_mode == 3){
+        } else if (this->color_mode == 3) {
             ImColor c = ImColor::HSV(i / 7.0f, 0.6f, 0.6f);
             color = c.operator ImU32();
         }
-        int size = selected? 8 : 5;
-        if (nodes(i, 3) == 0){
+        int size = selected ? 8 : 5;
+        if (nodes(i, 3) == 0) {
             this->viewport_draw_list->AddTriangleFilled(ImVec2(screen_pos.x, screen_pos.y - size), ImVec2(screen_pos.x - size, screen_pos.y + size), ImVec2(screen_pos.x + size, screen_pos.y + size), color);
-        }else if (nodes(i, 3) == 1){
+        } else if (nodes(i, 3) == 1) {
             this->viewport_draw_list->AddTriangleFilled(ImVec2(screen_pos.x, screen_pos.y + size), ImVec2(screen_pos.x - size, screen_pos.y - size), ImVec2(screen_pos.x + size, screen_pos.y - size), color);
         } else {
             this->viewport_draw_list->AddConvexPolyFilled(
-                (ImVec2*) (new ImVec2[6]{
+                (ImVec2*)(new ImVec2[6]{
                     ImVec2(screen_pos.x, screen_pos.y),
                     ImVec2(screen_pos.x, screen_pos.y + (size * 2)),
                     ImVec2(screen_pos.x + (size * 1), screen_pos.y),
                     ImVec2(screen_pos.x, screen_pos.y),
                     ImVec2(screen_pos.x - (size * 1.5), screen_pos.y),
                     ImVec2(screen_pos.x, screen_pos.y - (size * 2.5)),
-                }), 6, color
-            );
+                    }), 6, color
+                    );
         }
         // this->viewport_draw_list->AddCircleFilled(ImVec2(screen_x, screen_y), selected ? 5 : 3, color);
     }
-    if (this->state->selected_solution != -1){
+    if (this->state->selected_solution != -1) {
         std::vector<std::vector<int> > routes = this->state->solutions[this->state->selected_solution]->getRoutes();
         int depot_x = nodes(0, 1);
         int depot_y = nodes(0, 2);
         ImVec2 depot_pos = this->toScreenCoords(depot_x, depot_y, bounds);
-        for (int i = 0; i < routes.size(); i++){
+        for (int i = 0; i < routes.size(); i++) {
             std::vector<int> route = routes[i];
             ImVec4 color = (ImVec4)ImColor::HSV(i / 7.0f, 0.6f, 0.6f);
-            if (this->setup_route_on){
+            if (this->setup_route_on) {
                 int x2 = nodes(route[0], 1);
                 int y2 = nodes(route[0], 2);
                 ImVec2 screen_pos = this->toScreenCoords(x2, y2, bounds);
                 this->viewport_draw_list->AddLine(ImVec2(depot_pos.x, depot_pos.y), ImVec2(screen_pos.x, screen_pos.y), ImU32(ImGui::ColorConvertFloat4ToU32(color)), 2);
             }
-            for (int j = 0; j < route.size() - 1; j++){
+            for (int j = 0; j < route.size() - 1; j++) {
                 int x1 = nodes(route[j], 1);
                 int y1 = nodes(route[j], 2);
                 int x2 = nodes(route[j + 1], 1);
@@ -350,13 +350,13 @@ void GEngine::recalculateViewport() {
                 ImVec2 screen_pos2 = this->toScreenCoords(x2, y2, bounds);
                 this->viewport_draw_list->AddLine(ImVec2(screen_pos1.x, screen_pos1.y), ImVec2(screen_pos2.x, screen_pos2.y), ImU32(ImGui::ColorConvertFloat4ToU32(color)), 2);
             }
-            if (this->setup_route_on){
+            if (this->setup_route_on) {
                 int x1 = nodes(route[route.size() - 1], 1);
                 int y1 = nodes(route[route.size() - 1], 2);
                 ImVec2 screen_pos = this->toScreenCoords(x1, y1, bounds);
                 this->viewport_draw_list->AddLine(ImVec2(depot_pos.x, depot_pos.y), ImVec2(screen_pos.x, screen_pos.y), ImU32(ImGui::ColorConvertFloat4ToU32(color)), 2);
             }
-        } 
+        }
     }
 }
 
@@ -383,7 +383,7 @@ void GEngine::reset(char* path) {
     this->state->selected_node = -1;
     this->state->selected_solution = -1;
     this->node_positions.clear();
-    if (path != nullptr){
+    if (path != nullptr) {
         auto loader = new VRPTK::XMLLoader();
         this->state->vrp = loader->load(path);
         LOG(INFO) << "Loaded " << path;

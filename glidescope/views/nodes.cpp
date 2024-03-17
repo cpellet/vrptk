@@ -4,18 +4,18 @@ bool GNodesView::draw(GlobalState* state) {
     if (!GView::draw(state)) return false;
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_AlwaysAutoResize);
     auto nodes = state->vrp->getNodes();
-    if (ImGui::BeginTable("bodies_list", 4, ImGuiTableFlags_RowBg)){
+    if (ImGui::BeginTable("bodies_list", 4, ImGuiTableFlags_RowBg)) {
         ImGui::TableSetupColumn("Node");
         ImGui::TableSetupColumn("Type");
         ImGui::TableSetupColumn("Coords");
         ImGui::TableHeadersRow();
-        for (int i = 0; i < nodes.rows(); i++){
+        for (int i = 0; i < nodes.rows(); i++) {
             char label[32];
             snprintf(label, 32, "#%i", i);
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             bool selected = i == state->selected_node;
-            if (ImGui::Selectable(label, selected, ImGuiSelectableFlags_SpanAllColumns)){
+            if (ImGui::Selectable(label, selected, ImGuiSelectableFlags_SpanAllColumns)) {
                 state->selected_node = i;
             }
             ImGui::TableNextColumn();
