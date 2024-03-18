@@ -3,7 +3,7 @@
 bool GNodesView::draw(GlobalState* state) {
     if (!GView::draw(state)) return false;
     ImGui::Begin(name, nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    auto nodes = state->vrp->getNodes();
+    auto nodes = state->dataset->getData()->getNodes();
     if (ImGui::BeginTable("bodies_list", 4, ImGuiTableFlags_RowBg)) {
         ImGui::TableSetupColumn("Node");
         ImGui::TableSetupColumn("Type");
@@ -15,13 +15,13 @@ bool GNodesView::draw(GlobalState* state) {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
             bool selected = i == state->selected_node;
+            ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)state->colors[i]);
             if (ImGui::Selectable(label, selected, ImGuiSelectableFlags_SpanAllColumns)) {
                 state->selected_node = i;
             }
-            ImGui::TableNextColumn();
-            ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV((int)nodes(i, 3) / 7.0f, 0.6f, 0.6f));
-            ImGui::Text("%s", nodeTypeToAbbrev(nodes(i, 3)).c_str());
             ImGui::PopStyleColor();
+            ImGui::TableNextColumn();
+            ImGui::Text("%s", nodeTypeToAbbrev(nodes(i, 3)).c_str());
             ImGui::TableNextColumn();
             ImGui::Text("(%i, %i)", (int)nodes(i, 1), (int)nodes(i, 2));
         }

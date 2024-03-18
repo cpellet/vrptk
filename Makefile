@@ -48,10 +48,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake
+CMAKE_COMMAND = "/Users/cyruspellet/Applications/CLion Nova.app/Contents/bin/cmake/mac/aarch64/bin/cmake"
 
 # The command to remove a file.
-RM = /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake -E rm -f
+RM = "/Users/cyruspellet/Applications/CLion Nova.app/Contents/bin/cmake/mac/aarch64/bin/cmake" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -78,7 +78,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake to regenerate build system..."
-	/opt/homebrew/Cellar/cmake/3.28.3/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	"/Users/cyruspellet/Applications/CLion Nova.app/Contents/bin/cmake/mac/aarch64/bin/cmake" --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -372,6 +372,30 @@ glidescope/views/solution.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/glidescope.dir/build.make CMakeFiles/glidescope.dir/glidescope/views/solution.cpp.s
 .PHONY : glidescope/views/solution.cpp.s
 
+src/efvrptw.o: src/efvrptw.cpp.o
+.PHONY : src/efvrptw.o
+
+# target to build an object file
+src/efvrptw.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/efvrptw.cpp.o
+.PHONY : src/efvrptw.cpp.o
+
+src/efvrptw.i: src/efvrptw.cpp.i
+.PHONY : src/efvrptw.i
+
+# target to preprocess a source file
+src/efvrptw.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/efvrptw.cpp.i
+.PHONY : src/efvrptw.cpp.i
+
+src/efvrptw.s: src/efvrptw.cpp.s
+.PHONY : src/efvrptw.s
+
+# target to generate assembly for a file
+src/efvrptw.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/efvrptw.cpp.s
+.PHONY : src/efvrptw.cpp.s
+
 src/loaders/soln_loader.o: src/loaders/soln_loader.cpp.o
 .PHONY : src/loaders/soln_loader.o
 
@@ -396,53 +420,29 @@ src/loaders/soln_loader.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/loaders/soln_loader.cpp.s
 .PHONY : src/loaders/soln_loader.cpp.s
 
-src/loaders/xml_loader.o: src/loaders/xml_loader.cpp.o
-.PHONY : src/loaders/xml_loader.o
+src/vrptw.o: src/vrptw.cpp.o
+.PHONY : src/vrptw.o
 
 # target to build an object file
-src/loaders/xml_loader.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/loaders/xml_loader.cpp.o
-.PHONY : src/loaders/xml_loader.cpp.o
+src/vrptw.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/vrptw.cpp.o
+.PHONY : src/vrptw.cpp.o
 
-src/loaders/xml_loader.i: src/loaders/xml_loader.cpp.i
-.PHONY : src/loaders/xml_loader.i
-
-# target to preprocess a source file
-src/loaders/xml_loader.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/loaders/xml_loader.cpp.i
-.PHONY : src/loaders/xml_loader.cpp.i
-
-src/loaders/xml_loader.s: src/loaders/xml_loader.cpp.s
-.PHONY : src/loaders/xml_loader.s
-
-# target to generate assembly for a file
-src/loaders/xml_loader.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/loaders/xml_loader.cpp.s
-.PHONY : src/loaders/xml_loader.cpp.s
-
-src/vrp.o: src/vrp.cpp.o
-.PHONY : src/vrp.o
-
-# target to build an object file
-src/vrp.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/vrp.cpp.o
-.PHONY : src/vrp.cpp.o
-
-src/vrp.i: src/vrp.cpp.i
-.PHONY : src/vrp.i
+src/vrptw.i: src/vrptw.cpp.i
+.PHONY : src/vrptw.i
 
 # target to preprocess a source file
-src/vrp.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/vrp.cpp.i
-.PHONY : src/vrp.cpp.i
+src/vrptw.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/vrptw.cpp.i
+.PHONY : src/vrptw.cpp.i
 
-src/vrp.s: src/vrp.cpp.s
-.PHONY : src/vrp.s
+src/vrptw.s: src/vrptw.cpp.s
+.PHONY : src/vrptw.s
 
 # target to generate assembly for a file
-src/vrp.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/vrp.cpp.s
-.PHONY : src/vrp.cpp.s
+src/vrptw.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/vrptw.cpp.s
+.PHONY : src/vrptw.cpp.s
 
 test/main.o: test/main.cpp.o
 .PHONY : test/main.o
@@ -506,15 +506,15 @@ help:
 	@echo "... glidescope/views/solution.o"
 	@echo "... glidescope/views/solution.i"
 	@echo "... glidescope/views/solution.s"
+	@echo "... src/efvrptw.o"
+	@echo "... src/efvrptw.i"
+	@echo "... src/efvrptw.s"
 	@echo "... src/loaders/soln_loader.o"
 	@echo "... src/loaders/soln_loader.i"
 	@echo "... src/loaders/soln_loader.s"
-	@echo "... src/loaders/xml_loader.o"
-	@echo "... src/loaders/xml_loader.i"
-	@echo "... src/loaders/xml_loader.s"
-	@echo "... src/vrp.o"
-	@echo "... src/vrp.i"
-	@echo "... src/vrp.s"
+	@echo "... src/vrptw.o"
+	@echo "... src/vrptw.i"
+	@echo "... src/vrptw.s"
 	@echo "... test/main.o"
 	@echo "... test/main.i"
 	@echo "... test/main.s"

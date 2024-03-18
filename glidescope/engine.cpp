@@ -104,7 +104,7 @@ void GEngine::processEvent(SDL_Event& event) {
 }
 
 void GEngine::handleViewportClick(uint8_t button, int x, int y) {
-    Eigen::MatrixXd nodes = this->state->vrp->getNodes();
+    Eigen::MatrixXd nodes = this->state->dataset->getData()->getNodes();
     if (button == SDL_BUTTON_LEFT) {
         this->state->selected_node = closestNode(this->node_positions, x, y);
     }
@@ -133,11 +133,14 @@ void GEngine::renderUI() {
         ImGui::DockBuilderDockWindow("Inspector", dock2);
         ImGui::DockBuilderDockWindow("Nodes", dock3);
         ImGui::DockBuilderDockWindow("Fleet", dock3);
-        ImGui::DockBuilderDockWindow("Solution", dock4);
         ImGui::DockBuilderDockWindow("Schedule", dock4);
+        ImGui::DockBuilderDockWindow("Solution", dock4);
         ImGui::DockBuilderFinish(dockspace_id);
     }
     if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu(this->state->dataset->getName().c_str(), false)) {
+            ImGui::EndMenu();
+        }
         if (ImGui::BeginMenu("File")) {
             if (ImGui::BeginMenu("Open")) {
                 if (ImGui::MenuItem("Dataset")) {
@@ -192,6 +195,18 @@ void GEngine::renderUI() {
             ImGui::MenuItem("ImGUI Demo", NULL, &this->demo_window);
             ImGui::Separator();
             if (ImGui::BeginMenu("Colors")) {
+                if (ImGui::MenuItem("Type", NULL, this->color_mode == 1)) {
+                    this->setColorMode(1);
+                }
+                if (ImGui::MenuItem("Quantity", NULL, this->color_mode == 2)) {
+                    this->setColorMode(2);
+                }
+                if (ImGui::MenuItem("Id", NULL, this->color_mode == 3)) {
+                    this->setColorMode(3);
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Theme")) {
                 if (ImGui::MenuItem("Dark")) {
                     ImGui::StyleColorsDark();
                 }
@@ -207,7 +222,7 @@ void GEngine::renderUI() {
         }
         ImGui::EndMainMenuBar();
     }
-    Eigen::MatrixXd nodes = this->state->vrp->getNodes();
+    Eigen::MatrixXd nodes = this->state->dataset->getData()->getNodes();
     for (auto view : this->views) {
         view->draw(this->state.get());
     }
@@ -228,16 +243,6 @@ void GEngine::renderUI() {
         ImGui::EndPopup();
     }
     ImGui::SetCursorPos(content_avail - ImVec2(60, 10));
-    if (ImGui::Button("C", ImVec2(30, 30))) {
-        this->color_mode = (this->color_mode + 1) % 3;
-    }
-    ImGui::SetItemTooltip("Color mode");
-    if (ImGui::BeginPopupContextItem()) {
-        const char* elem_name = color_mode == 0 ? "None" : color_mode == 1 ? "Type" : color_mode == 2 ? "Quantity" : "Id";
-        ImGui::SliderInt("Scheme", &color_mode, 0, 3, elem_name);
-        ImGui::EndPopup();
-    }
-    ImGui::SetCursorPos(content_avail - ImVec2(90, 10));
     if (ImGui::Button("S", ImVec2(30, 30))) {
         this->setup_route_on = !this->setup_route_on;
     }
@@ -249,7 +254,9 @@ void GEngine::renderUI() {
         window_pos.y += 5;
         ImGui::SetNextWindowPos(window_pos);
         ImGui::Begin("Node Inspector", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration);
+        ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)this->state->colors[this->state->selected_node]);
         ImGui::Text("Node %i", this->state->selected_node);
+        ImGui::PopStyleColor();
         ImGui::End();
     }
     if (this->performance_window) {
@@ -271,8 +278,9 @@ ImVec2 GEngine::toScreenCoords(float x, float y, std::pair<ImVec2, ImVec2> bound
 void GEngine::recalculateViewport() {
     this->viewport_size = ImGui::GetContentRegionAvail();
     this->viewport_pos = ImGui::GetCursorScreenPos();
-    Eigen::MatrixXd nodes = this->state->vrp->getNodes();
-    std::map<int, VRPTK::Request> requests = this->state->vrp->getRequests();
+    VRPTW* vrp = this->state->dataset->getData();
+    Eigen::MatrixXd nodes = vrp->getNodes();
+    std::map<int, VRPTK::Request> requests = vrp->getRequests();
     std::pair<ImVec2, ImVec2> bounds = getBounds(nodes);
     int padding = 10;
     int padding_y = 40;
@@ -294,20 +302,7 @@ void GEngine::recalculateViewport() {
         ImVec2 screen_pos = this->toScreenCoords(x, y, bounds);
         this->node_positions[i] = ImVec2(screen_pos.x, screen_pos.y);
         bool selected = i == this->state->selected_node;
-        ImU32 color = IM_COL32(255, 255, 255, 255);
-        if (this->color_mode == 1) {
-            ImColor c = ImColor::HSV((int)nodes(i, 3) / 7.0f, 0.6f, 0.6f);
-            color = c.operator ImU32();
-        } else if (this->color_mode == 2) {
-            if (requests.find(i) != requests.end()) {
-                double quantity = requests.at(i).getQuantity();
-                ImColor c = ImColor::HSV(quantity / 100.0f, 0.6f, 0.6f);
-                color = c.operator ImU32();
-            }
-        } else if (this->color_mode == 3) {
-            ImColor c = ImColor::HSV(i / 7.0f, 0.6f, 0.6f);
-            color = c.operator ImU32();
-        }
+        ImU32 color = this->state->colors[i].operator ImU32();
         int size = selected ? 8 : 5;
         if (nodes(i, 3) == 0) {
             this->viewport_draw_list->AddTriangleFilled(ImVec2(screen_pos.x, screen_pos.y - size), ImVec2(screen_pos.x - size, screen_pos.y + size), ImVec2(screen_pos.x + size, screen_pos.y + size), color);
@@ -317,18 +312,18 @@ void GEngine::recalculateViewport() {
             this->viewport_draw_list->AddConvexPolyFilled(
                 (ImVec2*)(new ImVec2[6]{
                     ImVec2(screen_pos.x, screen_pos.y),
-                    ImVec2(screen_pos.x, screen_pos.y + (size * 2)),
-                    ImVec2(screen_pos.x + (size * 1), screen_pos.y),
+                    ImVec2(screen_pos.x, screen_pos.y + (size * 1.2)),
+                    ImVec2(screen_pos.x + size, screen_pos.y),
                     ImVec2(screen_pos.x, screen_pos.y),
-                    ImVec2(screen_pos.x - (size * 1.5), screen_pos.y),
-                    ImVec2(screen_pos.x, screen_pos.y - (size * 2.5)),
+                    ImVec2(screen_pos.x - (size * 1.4), screen_pos.y),
+                    ImVec2(screen_pos.x, screen_pos.y - (size * 1.8)),
                     }), 6, color
                     );
         }
         // this->viewport_draw_list->AddCircleFilled(ImVec2(screen_x, screen_y), selected ? 5 : 3, color);
     }
     if (this->state->selected_solution != -1) {
-        std::vector<std::vector<int> > routes = this->state->solutions[this->state->selected_solution]->getRoutes();
+        std::vector<std::vector<int> > routes = this->state->solutions[this->state->selected_solution]->getData()->getRoutes();
         int depot_x = nodes(0, 1);
         int depot_y = nodes(0, 2);
         ImVec2 depot_pos = this->toScreenCoords(depot_x, depot_y, bounds);
@@ -360,6 +355,42 @@ void GEngine::recalculateViewport() {
     }
 }
 
+void GEngine::setColorMode(int mode) {
+    this->state->colors.clear();
+    int n_nodes = this->state->dataset->getData()->getNodes().rows();
+    Eigen::MatrixXd nodes = this->state->dataset->getData()->getNodes();
+    std::map<int, VRPTK::Request> requests = this->state->dataset->getData()->getRequests();
+    switch (mode) {
+    case 1:
+        for (int i = 0; i < n_nodes; i++) {
+            ImColor c = ImColor::HSV((int)nodes(i, 3) / 7.0f, 0.6f, 0.6f);
+            this->state->colors[i] = c;
+        }
+        break;
+    case 2:
+        for (auto request : requests) {
+            double quantity = request.second.getQuantity();
+            ImColor c = ImColor::HSV(quantity / 100.0f, 0.6f, 0.6f);
+            this->state->colors[request.first] = c;
+        }
+        for (int i = 0; i < n_nodes; i++) {
+            if (this->state->colors.find(i) == this->state->colors.end()) {
+                ImColor c = ImColor::HSV(0.0f, 0.0f, 1.0f);
+                this->state->colors[i] = c;
+            }
+        }
+        break;
+    case 3:
+    default:
+        for (int i = 0; i < n_nodes; i++) {
+            ImColor c = ImColor::HSV(i / 7.0f, 0.6f, 0.6f);
+            this->state->colors[i] = c;
+        }
+        break;
+    }
+    this->color_mode = mode;
+}
+
 void GEngine::registerView(GView* view) {
     this->views.push_back(view);
 }
@@ -379,13 +410,20 @@ void GEngine::teardown() {
 void GEngine::reset(char* path) {
     this->will_exit = false;
     this->state = std::shared_ptr<GlobalState>(new GlobalState());
-    this->state->solutions = std::vector<VRPTK::Solution*>();
+    this->state->solutions.clear();
     this->state->selected_node = -1;
     this->state->selected_solution = -1;
     this->node_positions.clear();
     if (path != nullptr) {
-        auto loader = new VRPTK::XMLLoader();
-        this->state->vrp = loader->load(path);
-        LOG(INFO) << "Loaded " << path;
+        if (VRPTK::EFVRPTWLoader::isCompatible(path)) {
+            auto loader = new VRPTK::EFVRPTWLoader();
+            this->state->dataset = loader->load(path);
+            LOG(INFO) << "Loaded EFVRPTW from " << path;
+        } else {
+            auto loader = new VRPTK::VRPTWLoader();
+            this->state->dataset = loader->load(path);
+            LOG(INFO) << "Loaded VRPTW from " << path;
+        }
+        this->setColorMode(this->color_mode);
     }
 }

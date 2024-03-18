@@ -2,7 +2,7 @@
 #define VRPTK_EFVRPTW_H
 
 #include "fleet.h"
-#include "vrp.h"
+#include "vrptw.h"
 #include "request.h"
 
 namespace VRPTK {
@@ -34,7 +34,7 @@ namespace VRPTK {
         double getPrice() const { return price; }
     };
 
-    class EVehicleProfile : VehicleProfile {
+    class EVehicleProfile : public VehicleProfile {
     private:
         double e_capacity, min_soc, max_soc, current_soc, consumption, fixed_cost, variable_cost;
     public:
@@ -42,35 +42,37 @@ namespace VRPTK {
             : VehicleProfile(type, number, departure, arrival, capacity, max_time), e_capacity(e_capacity), min_soc(min_soc), max_soc(max_soc), current_soc(current_soc), consumption(consumption), fixed_cost(fixed_cost), variable_cost(variable_cost) {
         }
 
-        double getE_Capacity() const { return e_capacity; }
-        double getMin_SOC() const { return min_soc; }
-        double getMax_SOC() const { return max_soc; }
+        double getECapacity() const { return e_capacity; }
+        double getMinSOC() const { return min_soc; }
+        double getMaxSOC() const { return max_soc; }
         double getCurrent_SOC() const { return current_soc; }
         double getConsumption() const { return consumption; }
-        double getFixed_Cost() const { return fixed_cost; }
-        double getVariable_Cost() const { return variable_cost; }
+        double getFixedCost() const { return fixed_cost; }
+        double getVariableCost() const { return variable_cost; }
     };
 
-    class EFPVRPTW : VRP {
+    class EFVRPTW : public VRPTW {
     private:
         std::vector<EVehicleProfile> fleet;
         std::vector<ChargingStation> stations;
         std::vector<PricePoint> prices;
     public:
-        EFPVRPTW() {}
-        EFPVRPTW(const Eigen::MatrixXd& nodes, const std::vector<EVehicleProfile>& fleet, const std::map<int, Request>& requests, const std::vector<ChargingStation>& stations, const std::vector<PricePoint>& prices)
-            : VRP(nodes, requests), fleet(fleet), stations(stations), prices(prices) {
+        EFVRPTW() = default;
+        EFVRPTW(const Eigen::MatrixXd& nodes, const std::vector<EVehicleProfile>& fleet, const std::map<int, Request>& requests, const std::vector<ChargingStation>& stations, const std::vector<PricePoint>& prices)
+            : VRPTW(nodes, requests), fleet(fleet), stations(stations), prices(prices) {
         }
 
         void setFleet(const std::vector<EVehicleProfile>& fleet) { this->fleet = fleet; }
+
         std::vector<EVehicleProfile> getFleet() const { return fleet; }
-        int getNumVehicles();
+
+        int getNumVehicles() const;
         void setStations(const std::vector<ChargingStation>& stations) { this->stations = stations; }
         std::vector<ChargingStation> getStations() const { return stations; }
-        int getNumStations() { return stations.size(); }
+        int getNumStations() const { return stations.size(); }
         void setPrices(const std::vector<PricePoint>& prices) { this->prices = prices; }
         std::vector<PricePoint> getPrices() const { return prices; }
-        int getNumPrices() { return prices.size(); }
+        int getNumPrices() const { return prices.size(); }
         int getTotalDistance(const Solution& solution);
     };
 }

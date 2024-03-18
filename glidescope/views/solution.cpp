@@ -10,7 +10,7 @@ bool GSolutionView::draw(GlobalState* state) {
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::TreeNode("Solutions")) {
             for (int i = 0; i < state->solutions.size(); i++) {
-                if (ImGui::Selectable(solutions[i]->getFilename().c_str(), i == state->selected_solution)) {
+                if (ImGui::Selectable(solutions[i]->getFilepath().c_str(), i == state->selected_solution)) {
                     state->selected_solution = i;
                 }
             }
@@ -24,7 +24,7 @@ bool GSolutionView::draw(GlobalState* state) {
     if (state->selected_solution == -1) {
         drawEmptyState();
     } else {
-        std::vector<std::vector<int> > routes = solutions[state->selected_solution]->getRoutes();
+        std::vector<std::vector<int> > routes = solutions[state->selected_solution]->getData()->getRoutes();
         if (ImGui::BeginTabBar("SolutionTabBar", ImGuiTabBarFlags_None)) {
             if (ImGui::BeginTabItem("Vehicles")) {
                 drawSolutionPaths(state);
@@ -32,6 +32,10 @@ bool GSolutionView::draw(GlobalState* state) {
             }
             if (ImGui::BeginTabItem("Metrics")) {
                 drawSolutionMetrics(state);
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Validation")) {
+                drawSolutionValidation(state);
                 ImGui::EndTabItem();
             }
             ImGui::EndTabBar();
@@ -53,7 +57,7 @@ void GSolutionView::drawEmptyState() {
 }
 
 void GSolutionView::drawSolutionPaths(const GlobalState* state) {
-    std::vector<std::vector<int> > routes = state->solutions[state->selected_solution]->getRoutes();
+    std::vector<std::vector<int> > routes = state->solutions[state->selected_solution]->getData()->getRoutes();
     ImGui::BeginTable("Solution", 2, ImGuiTableFlags_RowBg);
     ImGui::TableSetupColumn("Id");
     ImGui::TableSetupColumn("Itinerary");
@@ -78,10 +82,14 @@ void GSolutionView::drawSolutionPaths(const GlobalState* state) {
 }
 
 void GSolutionView::drawSolutionMetrics(const GlobalState* state) {
-    std::vector<std::vector<int> > routes = state->solutions[state->selected_solution]->getRoutes();
+    std::vector<std::vector<int> > routes = state->solutions[state->selected_solution]->getData()->getRoutes();
     auto solutions = state->solutions;
     ImGui::Text("Total vehicles:");
     ImGui::SameLine(200); ImGui::Text("%zu", routes.size());
     ImGui::Text("Total distance:");
-    ImGui::SameLine(200); ImGui::Text("%i", state->vrp->getTotalDistance(*solutions[state->selected_solution]));
+    ImGui::SameLine(200); ImGui::Text("%i", state->dataset->getData()->getTotalDistance(*solutions[state->selected_solution]->getData()));
+}
+
+void GSolutionView::drawSolutionValidation(const GlobalState* state) {
+
 }

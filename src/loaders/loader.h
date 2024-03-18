@@ -1,12 +1,14 @@
 #ifndef VRPTK_LOADER_H
 #define VRPTK_LOADER_H
 
-#include "../vrp.h"
+#include "../dataset.h"
+#include <sstream>
 
 namespace VRPTK {
+    template <typename T>
     class Loader {
     public:
-        VRP* load(const char* filename);
+        Dataset<T> load(const char* filename);
     };
 }
 

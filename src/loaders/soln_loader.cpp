@@ -2,14 +2,14 @@
 
 using namespace VRPTK;
 
-Solution* SolutionLoader::load(const char* filename) {
+Dataset<Solution>* SolutionLoader::load(const char* filename) {
     std::string line;
     std::ifstream file(filename);
     std::vector<std::vector<int>> routes;
     while (std::getline(file, line)) {
         if (line.find("Route") != std::string::npos) {
             std::vector<int> route;
-            std::string route_str = line.substr(line.find(":") + 1);
+            std::string route_str = line.substr(line.find(':') + 1);
             std::stringstream ss(route_str);
             int node;
             while (ss >> node) {
@@ -25,5 +25,6 @@ Solution* SolutionLoader::load(const char* filename) {
             break;
         }
     }
-    return new Solution(routes, filename_str);
+    auto solution = new Solution(routes);
+    return new Dataset<Solution>("", filename_str, "", filename, solution, Variant::VRPTW, true);
 }

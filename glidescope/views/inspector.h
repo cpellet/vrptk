@@ -3,6 +3,7 @@
 
 #include "view.h"
 #include "utils.h"
+#include "efvrptw.h"
 
 class GInspectorView : public GView {
 private:

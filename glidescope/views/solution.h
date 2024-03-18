@@ -9,6 +9,7 @@ private:
     void drawEmptyState();
     void drawSolutionPaths(const GlobalState* state);
     void drawSolutionMetrics(const GlobalState* state);
+    void drawSolutionValidation(const GlobalState* state);
 public:
     GSolutionView(std::string name) : GView(name) {}
     ~GSolutionView();

@@ -4,15 +4,12 @@
 #include "solution.h"
 #include "loader.h"
 
-#include <iostream>
 #include <fstream>
-#include <string>
 
 namespace VRPTK {
-
-    class SolutionLoader : public Loader {
+    class SolutionLoader : public Loader<Solution> {
     public:
-        Solution* load(const char* filename);
+        Dataset<Solution>* load(const char* filename);
     };
 
 }

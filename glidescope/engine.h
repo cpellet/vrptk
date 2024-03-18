@@ -15,12 +15,13 @@
 #include <glog/logging.h>
 #include <map>
 
-#include "vrp.h"
+#include "vrptw.h"
 #include "node.h"
 #include "fleet.h"
 #include "request.h"
 #include "solution.h"
-#include "loaders/xml_loader.h"
+#include "loaders/vrptw_loader.h"
+#include "loaders/efvrptw_loader.h"
 #include "loaders/soln_loader.h"
 
 #include "view.h"
@@ -49,8 +50,8 @@ private:
     bool demo_window = false;
     bool grid_on = true;
     bool setup_route_on = false;
-    int color_mode = 3;
     int grid_step = 5;
+    int color_mode = 3;
     ImVec2 viewport_pos, viewport_size;
     std::map<int, ImVec2> node_positions;
     ImDrawList* viewport_draw_list;
@@ -63,6 +64,7 @@ private:
     void renderUI();
     void teardown();
     float getScale() const;
+    void setColorMode(int mode);
 public:
     GEngine(int width, int height);
     void registerView(GView* view);
