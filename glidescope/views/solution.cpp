@@ -10,7 +10,7 @@ bool GSolutionView::draw(GlobalState* state) {
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::TreeNode("Solutions")) {
             for (int i = 0; i < state->solutions.size(); i++) {
-                if (ImGui::Selectable(solutions[i]->getFilepath().c_str(), i == state->selected_solution)) {
+                if (ImGui::Selectable(solutions[i]->getName().c_str(), i == state->selected_solution)) {
                     state->selected_solution = i;
                 }
             }
@@ -91,5 +91,17 @@ void GSolutionView::drawSolutionMetrics(const GlobalState* state) {
 }
 
 void GSolutionView::drawSolutionValidation(const GlobalState* state) {
-
+    std::vector<std::string> errors = state->dataset->getData()->validateSolution(*state->solutions[state->selected_solution]->getData());
+    if (errors.empty()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.3f, 0.6f, 0.6f));
+        ImGui::Text("Solution is valid");
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor::HSV(0.0f, 0.6f, 0.6f));
+        ImGui::Text("Solution is invalid");
+        ImGui::PopStyleColor();
+        for (int i = 0; i < errors.size(); i++) {
+            ImGui::Text("%s", errors[i].c_str());
+        }
+    }
 }

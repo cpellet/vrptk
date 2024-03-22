@@ -27,7 +27,10 @@ file(GLOB_RECURSE GLIDESCOPE_SRC CONFIGURE_DEPENDS
 "${PROJECT_SOURCE_DIR}/glidescope/*.h"
 )
 
+set(HEXALY_INCLUDE_DIRS /opt/localsolver_12_5/include)
+
 include(vcpkg/scripts/buildsystems/vcpkg.cmake)
+find_package(Eigen3 CONFIG REQUIRED)
 find_package(tinyxml2 CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_ttf CONFIG REQUIRED)
@@ -35,11 +38,20 @@ find_package(imgui CONFIG REQUIRED)
 find_package(implot CONFIG REQUIRED)
 find_package(tinyfiledialogs CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)
+find_package(Threads REQUIRED)
+
+file(GLOB LIBRARIES "/opt/localsolver_12_5/bin/*.dylib")
 
 include_directories(src glidescope)
 
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 add_library(vrptk STATIC ${VRPTK_SRC})
-target_link_libraries(vrptk tinyxml2::tinyxml2 glog::glog)
+target_link_libraries(vrptk PRIVATE Eigen3::Eigen tinyxml2::tinyxml2 glog::glog ${LIBRARIES} Threads::Threads)
+target_compile_definitions(vrptk PRIVATE TRUE ${LOCALSOLVER_FLAG})
+target_compile_definitions(vrptk PRIVATE LOCALSOLVER_EXISTS=1)
+target_include_directories(vrptk PUBLIC ${HEXALY_INCLUDE_DIRS})
 target_compile_features(vrptk PRIVATE cxx_std_17)
 
 add_executable(glidescope ${GLIDESCOPE_SRC})

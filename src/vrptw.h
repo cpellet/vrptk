@@ -27,7 +27,7 @@ namespace VRPTK {
         Eigen::MatrixXd getNodes() const { return nodes; }
         int getNumNodes() const;
 
-        void setFleet(const std::vector<VehicleProfile>& fleet) {this->fleet = fleet;}
+        void setFleet(const std::vector<VehicleProfile>& fleet) { this->fleet = fleet; }
         std::vector<VehicleProfile> getFleet() const { return fleet; }
         int getNumVehicles() const;
 
@@ -36,6 +36,9 @@ namespace VRPTK {
         int getNumRequests() const { return requests.size(); }
 
         int getTotalDistance(const Solution& solution);
+        std::vector<std::string> validateSolution(const Solution& solution);
+
+        int getDistance(int i, int j) const;
     };
 }
 

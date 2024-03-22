@@ -20,7 +20,14 @@ namespace VRPTK {
             vrp->setNodes(nodes);
             vrp->setFleet(fleet);
             vrp->setRequests(requests);
-            return new Dataset<VRPTW>("", filename, "", filename, vrp, Variant::VRPTW, false);
+            std::string filename_str;
+            for (int i = strlen(filename) - 1; i >= 0; i--) {
+                if (filename[i] == '/') {
+                    filename_str = filename + i + 1;
+                    break;
+                }
+            }
+            return new Dataset<VRPTW>("", filename_str, "", filename, vrp, Variant::VRPTW, false);
         }
         static std::vector<Node> loadNodes(tinyxml2::XMLDocument* doc) {
             tinyxml2::XMLNode* net_node = doc->FirstChildElement("instance")->FirstChildElement("network")->FirstChildElement("nodes")->FirstChildElement("node");

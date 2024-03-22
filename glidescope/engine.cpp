@@ -129,18 +129,20 @@ void GEngine::renderUI() {
         ImGuiID dock2 = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.5f, nullptr, &dockspace_id);
         ImGuiID dock3 = ImGui::DockBuilderSplitNode(dock2, ImGuiDir_Down, 0.7f, nullptr, &dock2);
         ImGuiID dock4 = ImGui::DockBuilderSplitNode(dock1, ImGuiDir_Down, 0.2f, nullptr, &dock1);
+        ImGuiID dock5 = ImGui::DockBuilderSplitNode(dock3, ImGuiDir_Down, 0.1f, nullptr, &dock3);
         ImGui::DockBuilderDockWindow("Viewport", dock1);
         ImGui::DockBuilderDockWindow("Inspector", dock2);
         ImGui::DockBuilderDockWindow("Nodes", dock3);
         ImGui::DockBuilderDockWindow("Fleet", dock3);
         ImGui::DockBuilderDockWindow("Schedule", dock4);
         ImGui::DockBuilderDockWindow("Solution", dock4);
+        ImGui::DockBuilderDockWindow("##Status", dock5);
         ImGui::DockBuilderFinish(dockspace_id);
     }
     if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu(this->state->dataset->getName().c_str(), false)) {
-            ImGui::EndMenu();
-        }
+        // if (ImGui::BeginMenu(this->state->dataset->getName().c_str(), false)) {
+        //     ImGui::EndMenu();
+        // }
         if (ImGui::BeginMenu("File")) {
             if (ImGui::BeginMenu("Open")) {
                 if (ImGui::MenuItem("Dataset")) {
@@ -183,7 +185,19 @@ void GEngine::renderUI() {
         if (ImGui::BeginMenu("Solve")) {
             ImGui::SeparatorText("Third-party");
             if (ImGui::MenuItem("Ortools")) {
-                LOG(INFO) << "Solving with Ortools";
+                LOG(ERROR) << "Solving with Ortools is not supported yet";
+            }
+            if (ImGui::MenuItem("Hexaly")) {
+                if (this->state->dataset->getVariant() == Variant::VRPTW) {
+                    auto solver = new VRPTK::VRPTWHEXALYSolver(this->state->dataset->getData());
+                    this->is_processing = true;
+                    std::thread t([solver]() {
+                        solver->solve(75);
+                        });
+                    t.detach();
+                } else {
+                    LOG(ERROR) << "Solving with Hexaly is not supported yet for this problem type";
+                }
             }
             ImGui::EndMenu();
         }
@@ -265,6 +279,31 @@ void GEngine::renderUI() {
         ImGui::Text("FPS: %f", ImGui::GetIO().Framerate);
         ImGui::End();
     }
+    ImGuiWindowClass window_class;
+    window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
+    ImGui::SetNextWindowClass(&window_class);
+    ImGui::Begin("##Status", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+    if (this->is_processing) {
+        std::string text = "Solving...";
+        auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+        auto windowWidth = ImGui::GetWindowSize().x;
+        auto windowHeight = ImGui::GetWindowSize().y;
+        ImGui::SetCursorPosX((windowWidth - textWidth - 4) * 0.5f);
+        ImGui::SetCursorPosY((windowHeight - ImGui::GetFrameHeight() - 10) * 0.5f);
+        ImSpinner::SpinnerAng("Processing", 8.0f, 0.5f);
+        ImGui::SameLine();
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3);
+        ImGui::Text("%s", text.c_str());
+    } else {
+        std::string text = "Ready";
+        auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+        auto windowWidth = ImGui::GetWindowSize().x;
+        auto windowHeight = ImGui::GetWindowSize().y;
+        ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+        ImGui::SetCursorPosY((windowHeight - ImGui::GetFrameHeight()) * 0.5f);
+        ImGui::Text("%s", text.c_str());
+    }
+    ImGui::End();
     ImGui::Render();
 }
 

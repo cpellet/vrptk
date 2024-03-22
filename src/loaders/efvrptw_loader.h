@@ -30,7 +30,14 @@ namespace VRPTK {
             vrp->setRequests(requests);
             vrp->setStations(stations);
             vrp->setPrices(prices);
-            return new Dataset<VRPTW>("", filename, "", filename, vrp, Variant::EFVRPTW, false);
+            std::string filename_str;
+            for (int i = strlen(filename) - 1; i >= 0; i--) {
+                if (filename[i] == '/') {
+                    filename_str = filename + i + 1;
+                    break;
+                }
+            }
+            return new Dataset<VRPTW>("", filename_str, "", filename, vrp, Variant::EFVRPTW, false);
         }
         static std::vector<EVehicleProfile> loadEFleet(tinyxml2::XMLDocument* doc) {
             tinyxml2::XMLNode* fleet_node = doc->FirstChildElement("instance")->FirstChildElement("fleet")->FirstChildElement("vehicle_profile");

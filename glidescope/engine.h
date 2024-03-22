@@ -13,7 +13,9 @@
 #include <imgui_impl_sdlrenderer2.h>
 #include <tinyfiledialogs/tinyfiledialogs.h>
 #include <glog/logging.h>
+
 #include <map>
+#include <thread>
 
 #include "vrptw.h"
 #include "node.h"
@@ -24,10 +26,13 @@
 #include "loaders/efvrptw_loader.h"
 #include "loaders/soln_loader.h"
 
+#include "solvers/vrptw_hexaly.h"
+
 #include "view.h"
 #include "state.h"
 #include "utils.h"
 #include "graphics.h"
+#include "imspinner.h"
 
 #define ASSERT(_e, ...)               \
     if (!(_e)) {                      \
@@ -50,6 +55,7 @@ private:
     bool demo_window = false;
     bool grid_on = true;
     bool setup_route_on = false;
+    bool is_processing = false;
     int grid_step = 5;
     int color_mode = 3;
     ImVec2 viewport_pos, viewport_size;

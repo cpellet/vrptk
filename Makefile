@@ -48,10 +48,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = "/Users/cyruspellet/Applications/CLion Nova.app/Contents/bin/cmake/mac/aarch64/bin/cmake"
+CMAKE_COMMAND = /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake
 
 # The command to remove a file.
-RM = "/Users/cyruspellet/Applications/CLion Nova.app/Contents/bin/cmake/mac/aarch64/bin/cmake" -E rm -f
+RM = /opt/homebrew/Cellar/cmake/3.28.3/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -78,7 +78,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake to regenerate build system..."
-	"/Users/cyruspellet/Applications/CLion Nova.app/Contents/bin/cmake/mac/aarch64/bin/cmake" --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/opt/homebrew/Cellar/cmake/3.28.3/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -420,6 +420,30 @@ src/loaders/soln_loader.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/loaders/soln_loader.cpp.s
 .PHONY : src/loaders/soln_loader.cpp.s
 
+src/solvers/vrptw_hexaly.o: src/solvers/vrptw_hexaly.cpp.o
+.PHONY : src/solvers/vrptw_hexaly.o
+
+# target to build an object file
+src/solvers/vrptw_hexaly.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/solvers/vrptw_hexaly.cpp.o
+.PHONY : src/solvers/vrptw_hexaly.cpp.o
+
+src/solvers/vrptw_hexaly.i: src/solvers/vrptw_hexaly.cpp.i
+.PHONY : src/solvers/vrptw_hexaly.i
+
+# target to preprocess a source file
+src/solvers/vrptw_hexaly.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/solvers/vrptw_hexaly.cpp.i
+.PHONY : src/solvers/vrptw_hexaly.cpp.i
+
+src/solvers/vrptw_hexaly.s: src/solvers/vrptw_hexaly.cpp.s
+.PHONY : src/solvers/vrptw_hexaly.s
+
+# target to generate assembly for a file
+src/solvers/vrptw_hexaly.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vrptk.dir/build.make CMakeFiles/vrptk.dir/src/solvers/vrptw_hexaly.cpp.s
+.PHONY : src/solvers/vrptw_hexaly.cpp.s
+
 src/vrptw.o: src/vrptw.cpp.o
 .PHONY : src/vrptw.o
 
@@ -512,6 +536,9 @@ help:
 	@echo "... src/loaders/soln_loader.o"
 	@echo "... src/loaders/soln_loader.i"
 	@echo "... src/loaders/soln_loader.s"
+	@echo "... src/solvers/vrptw_hexaly.o"
+	@echo "... src/solvers/vrptw_hexaly.i"
+	@echo "... src/solvers/vrptw_hexaly.s"
 	@echo "... src/vrptw.o"
 	@echo "... src/vrptw.i"
 	@echo "... src/vrptw.s"
